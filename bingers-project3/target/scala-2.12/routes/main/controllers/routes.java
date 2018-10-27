@@ -1,6 +1,6 @@
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/Users/bingerso/GitHub-Projects/csc750-project3/bingers-project3/conf/routes
-// @DATE:Sat Oct 27 13:50:59 EDT 2018
+// @DATE:Sat Oct 27 15:27:25 EDT 2018
 
 package controllers;
 
