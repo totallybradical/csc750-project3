@@ -96,14 +96,8 @@ public class HomeController extends Controller {
         // First, get the classes we need
         OntClass classMerchant = ontReasoned.getOntClass(NS + "Merchant");
 
-        // Get the properties we need
-        // N/A
-
         // Create the individuals we need
         Individual merchant = ontReasoned.createIndividual(NS + uniqueID, classMerchant);
-
-        // Add the properties
-        // N/A
 
         // Print ontology
         printOntology();
@@ -119,14 +113,8 @@ public class HomeController extends Controller {
         // First, get the classes we need
         OntClass classConsumer = ontReasoned.getOntClass(NS + "Consumer");
 
-        // Get the properties we need
-        // N/A
-
         // Create the individuals we need
         Individual consumer = ontReasoned.createIndividual(NS + uniqueID, classConsumer);
-
-        // Add the properties
-        // N/A
 
         // Print ontology
         printOntology();
@@ -140,13 +128,15 @@ public class HomeController extends Controller {
     // Add an individual to Transaction class
     public Result addTransaction(String senderID, String receiverID, String transactionID) {
         // First, get the classes we need
-        Individual sender = ontReasoned.getIndividual( NS + senderID);
-        Individual receiver = ontReasoned.getIndividual(NS + receiverID);
         OntClass classTransaction = ontReasoned.getOntClass(NS + "Transaction");
 
         // Get the properties we need
         OntProperty hasSender = ontReasoned.getObjectProperty(NS + "hasSender");
         OntProperty hasReceiver = ontReasoned.getObjectProperty(NS + "hasReceiver");
+
+        // Get existing individuals
+        Individual sender = ontReasoned.getIndividual( NS + senderID);
+        Individual receiver = ontReasoned.getIndividual(NS + receiverID);
 
         // Create the individuals we need
         Individual transaction = ontReasoned.createIndividual(NS + transactionID, classTransaction);
@@ -166,31 +156,107 @@ public class HomeController extends Controller {
 
     // Return whether a transaction is commercial
     public Result isCommercial(String transactionID) {
-        return(ok());
+        // First, get the classes we need
+        OntClass classCommercial = ontReasoned.getOntClass(NS + "Commercial");
+
+        // Get existing individuals
+        Individual transaction = ontReasoned.getIndividual( NS + transactionID);
+
+        // Check if transaction is commercial
+        boolean isCommercial = transaction.hasOntClass(classCommercial);
+
+        // Return appropriate JSON response
+        ObjectNode result = Json.newObject();
+        result.put("result", String.valueOf(isCommercial));
+        return ok(result);
     }
 
     // Return whether a transaction is personal
     public Result isPersonal(String transactionID) {
-        return(ok());
+        // First, get the classes we need
+        OntClass classPersonal = ontReasoned.getOntClass(NS + "Personal");
+
+        // Get existing individuals
+        Individual transaction = ontReasoned.getIndividual( NS + transactionID);
+
+        // Check if transaction is personal
+        boolean isPersonal = transaction.hasOntClass(classPersonal);
+
+        // Return appropriate JSON response
+        ObjectNode result = Json.newObject();
+        result.put("result", String.valueOf(isPersonal));
+        return ok(result);
     }
 
     // Return whether a transaction is a purchase transaction
     public Result isPurchase(String transactionID) {
-        return(ok());
+        // First, get the classes we need
+        OntClass classPurchase = ontReasoned.getOntClass(NS + "Purchase");
+
+        // Get existing individuals
+        Individual transaction = ontReasoned.getIndividual( NS + transactionID);
+
+        // Check if transaction is personal
+        boolean isPurchase = transaction.hasOntClass(classPurchase);
+
+        // Return appropriate JSON response
+        ObjectNode result = Json.newObject();
+        result.put("result", String.valueOf(isPurchase));
+        return ok(result);
     }
 
     // Return whether a transaction is a refund transaction
     public Result isRefund(String transactionID) {
-        return(ok());
+        // First, get the classes we need
+        OntClass classRefund = ontReasoned.getOntClass(NS + "Refund");
+
+        // Get existing individuals
+        Individual transaction = ontReasoned.getIndividual( NS + transactionID);
+
+        // Check if transaction is personal
+        boolean isRefund = transaction.hasOntClass(classRefund);
+
+        // Return appropriate JSON response
+        ObjectNode result = Json.newObject();
+        result.put("result", String.valueOf(isRefund));
+        return ok(result);
     }
 
     // Return whether a merchant is trusted (return an error if the ID is not a merchant)
     public Result isTrusted(String merchantID) {
-        return(ok());
+        // First, get the classes we need
+        OntClass classTrusted = ontReasoned.getOntClass(NS + "Trusted");
+        OntClass classMerchant = ontReasoned.getOntClass(NS + "Merchant");
+
+        // Get existing individuals
+        Individual merchant = ontReasoned.getIndividual( NS + merchantID);
+
+        // Check if ID belongs to a merchant
+        if (merchant.hasOntClass(classMerchant)) {
+            // Check if merchant is trusted
+            boolean isTrusted = merchant.hasOntClass(classTrusted);
+
+            // Return appropriate JSON response
+            ObjectNode result = Json.newObject();
+            result.put("result", String.valueOf(isTrusted));
+            return ok(result);
+        } else {
+            // Return appropriate JSON response
+            ObjectNode result = Json.newObject();
+            result.put("error", "not a merchant");
+            return ok(result);
+        }
     }
 
     // This should reload the ontology (or delete all added individuals), so that I can start the testing afresh
     public Result reset() {
+        // Reload ontology
+        loadOntology();
+
+        // Print ontology
+        printOntology();
+
+        // Return success
         ObjectNode result = Json.newObject();
         result.put("result", "success");
         return ok(result);
